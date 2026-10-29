@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#081426" />
+  <title>Cámara de Escape Digital Logística</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{--ink:#10243e;--muted:#5f6f82;--paper:#f8fbff;--line:rgba(15,35,61,.14)}
+    *{box-sizing:border-box} html{scroll-behavior:smooth}
+    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:#eef4ff;overflow-x:hidden}
+    button,input,textarea{font:inherit}
+    .app-shell{min-height:100dvh;position:relative;isolation:isolate}
+    .scene{min-height:100dvh;display:none;position:relative;overflow:hidden;padding:92px 18px 34px}
+    .scene.active{display:flex;animation:sceneIn .55s ease both}
+    @keyframes sceneIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+    .scene::before,.scene::after{content:"";position:absolute;border-radius:999px;filter:blur(4px);opacity:.55;z-index:-1;animation:drift 8s ease-in-out infinite alternate}
+    .scene::before{width:360px;height:360px;left:-110px;top:12%}.scene::after{width:300px;height:300px;right:-90px;bottom:8%;animation-delay:-3s}
+    @keyframes drift{to{transform:translate3d(24px,-22px,0) scale(1.08)}}
+    .theme-start{background:radial-gradient(circle at 12% 12%,#fff7ad 0,transparent 33%),radial-gradient(circle at 88% 15%,#a6f4ee 0,transparent 30%),linear-gradient(135deg,#fff,#e9f2ff)}
+    .theme-start::before{background:#ffcf4a}.theme-start::after{background:#32d5c4}
+    .theme-cafe{background:radial-gradient(circle at 20% 20%,#ffd68b 0,transparent 35%),radial-gradient(circle at 85% 72%,#ff8f70 0,transparent 31%),linear-gradient(135deg,#fffaf2,#e8fff4)}
+    .theme-cafe::before{background:#ff9955}.theme-cafe::after{background:#38d49b}
+    .theme-reception{color:#eef6ff;background:radial-gradient(circle at 20% 25%,#2458af 0,transparent 36%),radial-gradient(circle at 85% 70%,#9b4ddb 0,transparent 33%),linear-gradient(145deg,#081426,#16264a)}
+    .theme-reception::before{background:#2c80ff}.theme-reception::after{background:#c65cff}
+    .theme-popcorn{background:radial-gradient(circle at 15% 70%,#ffdf5c 0,transparent 32%),radial-gradient(circle at 85% 15%,#ff6c78 0,transparent 32%),linear-gradient(135deg,#fff7df,#fff)}
+    .theme-popcorn::before{background:#ffc928}.theme-popcorn::after{background:#ff6c78}
+    .theme-boxes{color:#f6fbff;background:radial-gradient(circle at 15% 20%,#0d8597 0,transparent 35%),radial-gradient(circle at 88% 75%,#fa8b32 0,transparent 34%),linear-gradient(145deg,#071b28,#103c4c)}
+    .theme-boxes::before{background:#18d0c0}.theme-boxes::after{background:#ff7a24}
+    .theme-cowork{background:radial-gradient(circle at 15% 20%,#a9edff 0,transparent 34%),radial-gradient(circle at 85% 75%,#c9a5ff 0,transparent 31%),linear-gradient(135deg,#fafdff,#fff4fc)}
+    .theme-cowork::before{background:#3dd1f2}.theme-cowork::after{background:#9b67e8}
+    .theme-final{color:#f6fbff;background:radial-gradient(circle at 15% 20%,#0a8f80 0,transparent 32%),radial-gradient(circle at 85% 75%,#6a38b7 0,transparent 32%),linear-gradient(145deg,#07111f,#132a49)}
+    .theme-final::before{background:#10c99e}.theme-final::after{background:#8a55e8}
+    .glass{width:min(980px,100%);margin:auto;border:1px solid rgba(255,255,255,.65);border-radius:28px;background:rgba(255,255,255,.84);box-shadow:0 24px 70px rgba(25,51,86,.18);backdrop-filter:blur(16px);overflow:hidden}
+    .dark .glass,.theme-reception .glass,.theme-boxes .glass,.theme-final .glass{background:rgba(8,18,37,.82);border-color:rgba(255,255,255,.14);box-shadow:0 24px 80px rgba(0,0,0,.35)}
+    .topbar{position:fixed;z-index:50;top:0;left:0;right:0;height:70px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 18px;background:rgba(255,255,255,.78);backdrop-filter:blur(15px);border-bottom:1px solid rgba(18,45,78,.1)}
+    .topbar.darkbar{background:rgba(5,13,27,.82);color:#fff;border-color:rgba(255,255,255,.1)}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.02em}.brand-badge{width:38px;height:38px;border-radius:13px;display:grid;place-items:center;color:white;background:linear-gradient(135deg,#ff6b52,#8b43d6);box-shadow:0 8px 22px rgba(116,60,190,.25)}
+    .hud{display:flex;gap:8px;align-items:center}.chip{border-radius:999px;padding:8px 12px;font-weight:800;font-size:.84rem;background:#fff;box-shadow:0 5px 18px rgba(31,58,92,.1);white-space:nowrap}.darkbar .chip{background:rgba(255,255,255,.1)}
+    .progress{position:fixed;top:70px;left:0;right:0;z-index:49;height:5px;background:rgba(14,37,68,.12)}.progress>div{height:100%;width:0;background:linear-gradient(90deg,#18c5ad,#ffb62e,#ff5f72);transition:width .45s ease}
+    .hero{display:grid;grid-template-columns:1.05fr .95fr;gap:28px;padding:34px;align-items:center}.content{padding:30px 34px 34px}
+    h1{font-size:clamp(2rem,6vw,4.6rem);line-height:.96;margin:0;font-weight:950;letter-spacing:-.055em}h2{font-size:clamp(1.7rem,4vw,2.8rem);line-height:1.05;margin:0;font-weight:950;letter-spacing:-.035em}.lead{font-size:clamp(1rem,2vw,1.18rem);line-height:1.65;color:var(--muted)}
+    .theme-reception .lead,.theme-boxes .lead,.theme-final .lead{color:#cbd9ed}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border-radius:999px;background:#e5f7f4;color:#08796d;font-size:.75rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;margin-bottom:15px}.dark .eyebrow,.theme-reception .eyebrow,.theme-boxes .eyebrow,.theme-final .eyebrow{background:rgba(40,215,190,.13);color:#58ecd6}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:15px}.field label{display:block;font-weight:850;font-size:.87rem;margin:0 0 7px}.field input,.field textarea{width:100%;border-radius:15px;border:1px solid #cbd6e5;background:#fff;padding:13px 14px;outline:none;transition:.2s;resize:vertical;color:#10243e}.field input:focus,.field textarea:focus{border-color:#2e8bf0;box-shadow:0 0 0 4px rgba(46,139,240,.13)}
+    .btn{border:0;border-radius:16px;padding:13px 18px;font-weight:900;cursor:pointer;transition:transform .18s,box-shadow .18s,filter .18s;display:inline-flex;align-items:center;justify-content:center;gap:9px}.btn:hover{transform:translateY(-2px);filter:saturate(1.08)}.btn:active{transform:translateY(0)}.btn-primary{color:#fff;background:linear-gradient(135deg,#0bb69d,#1689e5);box-shadow:0 12px 28px rgba(17,144,181,.25)}.btn-secondary{color:#fff;background:linear-gradient(135deg,#f35c6f,#9348d7);box-shadow:0 12px 28px rgba(169,63,144,.24)}.btn-light{background:#fff;color:#153252;box-shadow:0 10px 25px rgba(17,46,83,.13)}.btn-ghost{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);color:#fff}.btn:disabled{cursor:not-allowed;opacity:.52;transform:none;filter:grayscale(.2)}
+    .mission-card{border-radius:22px;padding:20px;background:linear-gradient(145deg,#ffffff,#f1f7ff);border:1px solid #dce7f5;box-shadow:0 12px 28px rgba(23,49,82,.1)}.theme-reception .mission-card,.theme-boxes .mission-card,.theme-final .mission-card{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.15)}
+    .riddle{font-size:clamp(1.05rem,2.6vw,1.35rem);font-weight:800;line-height:1.65;margin:0}.riddle::before{content:'“';font-size:2.3em;line-height:0;vertical-align:-.28em;color:#ff7d50;margin-right:4px}.riddle::after{content:'”';color:#ff7d50}
+    .scene-art{position:relative;min-height:310px;display:grid;place-items:center}.orb{position:absolute;border-radius:999px;filter:blur(1px);animation:float 4.8s ease-in-out infinite}.orb.o1{width:70px;height:70px;background:#ffca38;left:7%;top:12%}.orb.o2{width:44px;height:44px;background:#ff697c;right:10%;top:18%;animation-delay:-1.2s}.orb.o3{width:95px;height:95px;background:#34d2be;right:14%;bottom:4%;animation-delay:-2.4s}@keyframes float{50%{transform:translateY(-18px) rotate(8deg)}}
+    .object{position:relative;width:min(330px,82vw);aspect-ratio:1;border:0;border-radius:38px;cursor:pointer;background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(232,242,255,.78));box-shadow:0 28px 55px rgba(16,44,83,.2),inset 0 0 0 1px rgba(255,255,255,.65);display:grid;place-items:center;transition:.3s;animation:pulseObj 2.8s ease-in-out infinite}.object:hover{transform:scale(1.035) rotate(-1deg)}@keyframes pulseObj{50%{box-shadow:0 30px 70px rgba(16,44,83,.28),0 0 0 12px rgba(255,255,255,.16)}}.object .emoji{font-size:clamp(6rem,20vw,10rem);filter:drop-shadow(0 14px 13px rgba(23,45,74,.18));animation:bob 3s ease-in-out infinite}@keyframes bob{50%{transform:translateY(-10px) rotate(2deg)}}.tap{position:absolute;bottom:18px;font-size:.78rem;font-weight:900;color:#53677f;background:#fff;border-radius:999px;padding:7px 11px}
+    .answer-row{display:flex;gap:10px;margin-top:16px}.answer-row input{flex:1;min-width:0;border:2px solid rgba(52,114,163,.32);border-radius:16px;padding:13px 15px;font-weight:800;outline:none;background:#fff;color:#101828;caret-color:#101828;-webkit-text-fill-color:#101828;box-shadow:0 5px 16px rgba(16,24,40,.08)}.answer-row input::placeholder{color:#667085;opacity:1}.answer-row input:focus{border-color:#087f72;box-shadow:0 0 0 4px rgba(8,127,114,.16)}.answer-row input:disabled{background:#f8fafc;color:#101828;-webkit-text-fill-color:#101828;opacity:1}
+    .feedback{display:none;margin-top:14px;border-radius:16px;padding:13px 15px;font-weight:800}.feedback.show{display:block;animation:sceneIn .35s ease}.feedback.ok{background:#d8faec;color:#087453;border:1px solid #8ce3c3}.feedback.bad{background:#fff0d7;color:#874800;border:1px solid #ffc86c}
+    .next-riddle{display:none;margin-top:18px;padding:20px;border-radius:20px;background:linear-gradient(135deg,#fff3c4,#fff);border:1px solid #f2d45f;color:#29364b}.next-riddle.show{display:block;animation:sceneIn .45s ease}.next-riddle .riddle{font-size:1.04rem}
+    .mini-map{display:flex;gap:7px;flex-wrap:wrap;margin-top:18px}.step-dot{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:.78rem;font-weight:900;background:#e4ebf5;color:#607087}.step-dot.done{background:#17b69e;color:white}.step-dot.current{background:#ffb12d;color:#3b2900;box-shadow:0 0 0 5px rgba(255,177,45,.18)}
+    .timer-warning{color:#d94b5c!important;animation:blink .8s infinite alternate}@keyframes blink{to{opacity:.5}}
+    .modal{position:fixed;inset:0;z-index:100;display:none;place-items:center;padding:18px;background:rgba(3,9,18,.7);backdrop-filter:blur(8px)}.modal.open{display:grid}.modal-card{width:min(620px,100%);max-height:90dvh;overflow:auto;border-radius:24px;background:white;color:#10243e;padding:25px;box-shadow:0 30px 90px rgba(0,0,0,.35)}
+    .setting-btn{position:fixed;right:14px;bottom:14px;z-index:55;width:48px;height:48px;border:0;border-radius:50%;background:#122947;color:white;cursor:pointer;box-shadow:0 12px 30px rgba(0,0,0,.25);font-size:1.25rem}
+    .score-ring{width:180px;height:180px;border-radius:50%;display:grid;place-items:center;margin:auto;background:conic-gradient(#26d1b3 var(--score-angle),rgba(255,255,255,.14) 0);position:relative}.score-ring::after{content:"";position:absolute;inset:14px;border-radius:50%;background:#0d1d33}.score-ring span{position:relative;z-index:1;font-size:3rem;font-weight:950}.results{display:grid;gap:9px;margin-top:20px}.result-line{display:grid;grid-template-columns:42px 1fr auto;gap:10px;align-items:center;border-radius:14px;padding:11px 13px;background:rgba(255,255,255,.08)}.result-line small{color:#c6d5e8}.status-ok{color:#52e7c0}.status-bad{color:#ffd270}
+    .confetti{position:fixed;top:-20px;width:10px;height:18px;border-radius:3px;z-index:90;pointer-events:none;animation:fall linear forwards}@keyframes fall{to{transform:translateY(110dvh) rotate(760deg)}}
+    .hidden{display:none!important}
+    @media(max-width:760px){.scene{padding:88px 12px 24px}.hero{grid-template-columns:1fr;padding:22px}.content{padding:23px 20px}.scene-art{min-height:230px}.object{width:min(245px,74vw);border-radius:28px}.grid2{grid-template-columns:1fr}.brand span:last-child{display:none}.chip{padding:7px 9px;font-size:.74rem}.answer-row{flex-direction:column}.btn{width:100%}.hud{gap:5px}.topbar{padding:0 10px}.result-line{grid-template-columns:34px 1fr}.result-line>strong:last-child{grid-column:2}.setting-btn{width:44px;height:44px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+<div class="app-shell">
+  <header id="topbar" class="topbar">
+    <div class="brand"><div class="brand-badge">⌁</div><span>Ruta de las claves</span></div>
+    <div class="hud">
+      <div class="chip">⏱ <span id="timer">45:00</span></div>
+      <div class="chip">★ <span id="liveScore">0</span>/100</div>
+      <div class="chip"><span id="stageLabel">Inicio</span></div>
+    </div>
+  </header>
+  <div class="progress"><div id="progressBar"></div></div>
+
+  <main>
+    <section class="scene theme-start active" data-scene="register">
+      <div class="glass hero">
+        <div>
+          <span class="eyebrow">Cámara de escape digital</span>
+          <h1>Rally<br><span style="color:#0eaa97">logístico</span></h1>
+          <p class="lead">Cinco estaciones, cinco decisiones y una sola ruta. Resuelvan cada reto, introduzcan la clave y descifren el siguiente destino dentro de la universidad.</p>
+          <div class="mini-map"><span class="step-dot current">0</span><span class="step-dot">1</span><span class="step-dot">2</span><span class="step-dot">3</span><span class="step-dot">4</span><span class="step-dot">5</span></div>
+        </div>
+        <form id="registerForm" class="mission-card" autocomplete="off" onsubmit="return false;">
+          <h2 style="font-size:1.55rem;margin-bottom:16px">Registro de misión</h2>
+          <div class="grid2">
+            <div class="field"><label for="participant">Nombre del participante responsable</label><input id="participant" required maxlength="70" placeholder="Ejemplo: Mariana Rodríguez"></div>
+            <div class="field"><label for="team">Nombre del equipo</label><input id="team" required maxlength="60" placeholder="Ejemplo: Los Estrategas"></div>
+          </div>
+          <div class="field" style="margin-top:14px"><label for="members">Integrantes del equipo</label><textarea id="members" required rows="4" maxlength="400" placeholder="Escriban los nombres separados por comas"></textarea></div>
+          <div class="field" style="margin-top:14px"><label for="access">Clave de activación entregada por la docente</label><input id="access" required maxlength="20" placeholder="Escriban la clave de inicio"></div>
+          <button class="btn btn-primary" style="width:100%;margin-top:17px" type="button" onclick="startMission()">Iniciar misión <span>→</span></button>
+          <p style="font-size:.78rem;color:#6c7a8e;margin:12px 0 0;text-align:center">El cronómetro comenzará al iniciar. No cierren esta página durante el recorrido.</p>
+        </form>
+      </div>
+    </section>
+
+    <section class="scene theme-start" data-scene="intro">
+      <div class="glass hero">
+        <div>
+          <span class="eyebrow">Punto de partida</span><h2>Descubran la primera estación</h2>
+          <div class="mission-card" style="margin-top:20px"><p class="riddle">No soy salón ni oficina. Entre una clase y otra recibo una demanda variable. Aquí circulan vasos, conversaciones y el aroma de una bebida que ayuda a continuar la jornada.</p></div>
+          <button class="btn btn-primary" style="margin-top:18px" onclick="goTo('r1')">Ya encontramos el lugar</button>
+        </div>
+        <div class="scene-art"><span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span><button class="object" onclick="revealObject(this,'La primera estación está asociada con una bebida caliente y el espacio común de los estudiantes.')"><span class="emoji">☕</span><span class="tap">Toca el objeto para investigar</span></button></div>
+      </div>
+    </section>
+
+    <section class="scene theme-cafe" data-scene="r1">
+      <div class="glass hero">
+        <div>
+          <span class="eyebrow">Reto 1 de 5</span><h2>Ordena el proceso logístico</h2>
+          <p class="lead">Localicen las tarjetas físicas. Ordénenlas según la secuencia correcta del proceso. Los números que la docente coloque en las tarjetas formarán la clave.</p>
+          <div class="mission-card"><strong>Regla:</strong> escriban los números en el mismo orden en que quedaron las actividades. No agreguen espacios.</div>
+          <div class="answer-row"><input id="answer1" inputmode="numeric" placeholder="Clave numérica"><button class="btn btn-secondary" onclick="submitChallenge(1)">Introducir código final</button></div>
+          <div id="feedback1" class="feedback"></div><div id="next1" class="next-riddle"></div>
+        </div>
+        <div class="scene-art"><span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span><button class="object" onclick="revealObject(this,'La secuencia comienza cuando se recibe el pedido y termina cuando se confirma la entrega.')"><span class="emoji">🗂️</span><span class="tap">Toca para obtener una pista</span></button></div>
+      </div>
+    </section>
+
+    <section class="scene theme-reception" data-scene="r2">
+      <div class="glass hero">
+        <div>
+          <span class="eyebrow">Reto 2 de 5</span><h2>El código de los costos</h2>
+          <p class="lead">Clasifiquen cada tarjeta como costo registrado, oculto u omitido. En cada tarjeta seleccionen el número correspondiente y unan los ocho números en el orden indicado.</p>
+          <div class="mission-card"><strong>Clave:</strong> ocho números, sin espacios ni guiones.</div>
+          <div class="answer-row"><input id="answer2" inputmode="numeric" placeholder="Código de ocho números"><button class="btn btn-secondary" onclick="submitChallenge(2)">Introducir código final</button></div>
+          <div id="feedback2" class="feedback"></div><div id="next2" class="next-riddle"></div>
+        </div>
+        <div class="scene-art"><span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span><button class="object" onclick="revealObject(this,'Registrado aparece en las cuentas. Oculto existe, pero no suele medirse. Omitido debió presupuestarse y fue olvidado.')"><span class="emoji">🔔</span><span class="tap">Toca para obtener una pista</span></button></div>
+      </div>
+    </section>
+
+    <section class="scene theme-popcorn" data-scene="r3">
+      <div class="glass hero">
+        <div>
+          <span class="eyebrow">Reto 3 de 5</span><h2>Control de inventario</h2>
+          <p class="lead">Inventario inicial: <strong>48</strong>. Entrada: <strong>27</strong>. Entrega: <strong>35</strong>. Unidades dañadas: <strong>4</strong>.</p>
+          <div class="mission-card"><div style="font-weight:850;line-height:1.85">1. Sumen el inventario inicial y la entrada.<br>2. Resten las unidades entregadas.<br>3. Resten las unidades dañadas.<br>4. Escriban los tres resultados separados por guiones.</div></div>
+          <div class="answer-row"><input id="answer3" placeholder="Resultado 1-Resultado 2-Resultado 3"><button class="btn btn-secondary" onclick="submitChallenge(3)">Introducir código final</button></div>
+          <div id="feedback3" class="feedback"></div><div id="next3" class="next-riddle"></div>
+        </div>
+        <div class="scene-art"><span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span><button class="object" onclick="revealObject(this,'Las entradas aumentan el inventario. Las entregas y los productos dañados lo reducen.')"><span class="emoji">🍿</span><span class="tap">Toca para obtener una pista</span></button></div>
+      </div>
+    </section>
+
+    <section class="scene theme-boxes" data-scene="r4">
+      <div class="glass hero">
+        <div>
+          <span class="eyebrow">Reto 4 de 5</span><h2>La actividad de apoyo</h2>
+          <p class="lead">Revisen las tarjetas de la cadena de valor de Michael Porter e identifiquen cuál corresponde a una actividad de apoyo.</p>
+          <div class="mission-card"><strong>Opciones:</strong> logística interna, operaciones, logística externa, gestión de recursos humanos, marketing y ventas, servicio posventa.</div>
+          <div class="answer-row"><input id="answer4" placeholder="Nombre completo de la actividad"><button class="btn btn-secondary" onclick="submitChallenge(4)">Introducir código final</button></div>
+          <div id="feedback4" class="feedback"></div><div id="next4" class="next-riddle"></div>
+        </div>
+        <div class="scene-art"><span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span><button class="object" onclick="revealObject(this,'La actividad correcta selecciona, capacita, desarrolla y administra al personal de toda la organización.')"><span class="emoji">📦</span><span class="tap">Toca para obtener una pista</span></button></div>
+      </div>
+    </section>
+
+    <section class="scene theme-cowork" data-scene="r5">
+      <div class="glass hero">
+        <div>
+          <span class="eyebrow">Reto 5 de 5</span><h2>Mejora del proceso</h2>
+          <p class="lead">El proceso actual tarda 4 + 5 + 4 + 12 + 5 + 10 minutos. Se eliminan dos actividades de 5 minutos y la espera de aprobación se reduce en 8 minutos.</p>
+          <div class="mission-card"><div style="font-weight:850;line-height:1.85">1. Calculen el tiempo actual.<br>2. Calculen los minutos reducidos.<br>3. Calculen el nuevo tiempo.<br>4. Formen la clave uniendo los minutos reducidos y el nuevo tiempo, sin espacios ni guiones.</div></div>
+          <div class="answer-row"><input id="answer5" inputmode="numeric" placeholder="Código de cuatro números"><button class="btn btn-secondary" onclick="submitChallenge(5)">Introducir código final</button></div>
+          <div id="feedback5" class="feedback"></div><div id="next5" class="next-riddle"></div>
+        </div>
+        <div class="scene-art"><span class="orb o1"></span><span class="orb o2"></span><span class="orb o3"></span><button class="object" onclick="revealObject(this,'Sumen primero todo el proceso. Luego sumen 5 + 5 + 8 y resten ese resultado al tiempo original.')"><span class="emoji">🪑</span><span class="tap">Toca para obtener una pista</span></button></div>
+      </div>
+    </section>
+
+    <section class="scene theme-final" data-scene="final">
+      <div class="glass content" style="max-width:1000px">
+        <div class="grid2" style="align-items:center">
+          <div><span class="eyebrow">Misión completada</span><h2 id="finalTitle">Resultado del equipo</h2><p class="lead" id="finalText"></p><div id="results" class="results"></div></div>
+          <div><div id="scoreRing" class="score-ring" style="--score-angle:0deg"><span id="finalScore">0</span></div><p style="text-align:center;font-weight:900;margin:12px 0 0">Puntaje final sobre 100</p></div>
+        </div>
+        <div class="grid2" style="margin-top:24px"><button class="btn btn-primary" onclick="downloadCertificate()">Descargar certificado PNG</button><button class="btn btn-light" onclick="downloadReport()">Descargar certificado con respuestas</button></div>
+      </div>
+    </section>
+  </main>
+
+  <button class="setting-btn" aria-label="Configuración docente" onclick="openSettings()">⚙</button>
+  <div id="settingsModal" class="modal" role="dialog" aria-modal="true" aria-label="Configuración docente">
+    <div class="modal-card">
+      <h2 style="font-size:1.6rem">Configuración docente</h2>
+      <p class="lead" style="font-size:.95rem">Los cambios se guardan en este dispositivo. Configure la clave que colocará en las tarjetas del Reto 1 antes de iniciar la actividad.</p>
+      <div class="field"><label for="cfgAccess">Clave de activación</label><input id="cfgAccess" value="parcial" readonly></div>
+      <div class="field" style="margin-top:12px"><label for="cfgR1">Clave numérica del Reto 1</label><input id="cfgR1" inputmode="numeric" value="3512476"></div>
+      <div class="field" style="margin-top:12px"><label for="cfgMinutes">Duración total en minutos</label><input id="cfgMinutes" type="number" min="10" max="180" value="45"></div>
+      <div class="grid2" style="margin-top:18px"><button class="btn btn-primary" onclick="saveSettings()">Guardar configuración</button><button class="btn" style="background:#e9eef5" onclick="closeSettings()">Cerrar</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const riddles = {
+    1: 'Soy el primer eslabón visible de la universidad. Recibo a quienes llegan, respondo preguntas y dirijo cada necesidad hacia el lugar correcto. En una cadena logística sería el punto de recepción y orientación.',
+    2: 'El siguiente punto no tiene estanterías ni racks, pero transforma inventario en producto terminado justo cuando aparece la demanda. Comienzo como un pequeño grano. Con calor aumento mi volumen y me convierto en un producto ligero que acompaña películas, eventos y descansos.',
+    3: 'Para encontrarme deberán cruzar la conexión que une dos lados. Después busquen el número que sigue al siete. Frente a él, al fondo, varias unidades esperan agrupadas como inventario listo para ser trasladado.',
+    4: 'Aquí las ideas, los proyectos y las personas comparten un mismo espacio. Antes de entrar existe una zona de espera. No busquen todas las posiciones disponibles: la evidencia está donde comienza la fila de asientos.',
+    5: 'Regresen al centro de control donde se activó la operación. Allí comenzó el cronómetro y allí deberá cerrarse la misión.'
+  };
+  const destinations = {1:'r2',2:'r3',3:'r4',4:'r5',5:'final'};
+  const labels = {register:'Inicio',intro:'Pista inicial',r1:'Reto 1',r2:'Reto 2',r3:'Reto 3',r4:'Reto 4',r5:'Reto 5',final:'Resultado'};
+  let settings = JSON.parse(localStorage.getItem('rallyLogisticoSettings') || 'null') || {access:'parcial',r1:'3512476',minutes:45};
+  settings.access = 'parcial';
+  settings.r1 = '3512476';
+  localStorage.setItem('rallyLogisticoSettings', JSON.stringify(settings));
+  let state = {participant:'',team:'',members:'',started:false,current:'register',seconds:settings.minutes*60,answers:[],attempts:{},score:0,finished:false};
+  let timerHandle = null;
+
+  function normalize(v){return String(v||'').trim().toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').replace(/[–—]/g,'-')}
+  function compact(v){return normalize(v).replace(/[\s-]/g,'')}
+  function answerIsCorrect(n,value){
+    if(n===1) return compact(value)===compact(settings.r1);
+    if(n===2) return String(value||'').replace(/\D/g,'')==='48271936';
+    if(n===3) return compact(value)==='754036';
+    if(n===4){const v=compact(value);return ['RECURSOSHUMANOS','GESTIONDERECURSOSHUMANOS'].includes(v)}
+    if(n===5) return ['1822','CICLO1822'].includes(compact(value));
+    return false;
+  }
+  function correctAnswer(n){return [null,settings.r1,'48271936','75-40-36','Recursos humanos','1822'][n]}
+  function goTo(name){
+    document.querySelectorAll('.scene').forEach(s=>s.classList.toggle('active',s.dataset.scene===name));
+    state.current=name; document.getElementById('stageLabel').textContent=labels[name];
+    const index={register:0,intro:0,r1:1,r2:2,r3:3,r4:4,r5:5,final:6}[name]||0;
+    document.getElementById('progressBar').style.width=(index/6*100)+'%';
+    const dark=['r2','r4','final'].includes(name);document.getElementById('topbar').classList.toggle('darkbar',dark);
+    window.scrollTo({top:0,behavior:'smooth'});
+    saveProgress();
+  }
+  function startTimer(){
+    clearInterval(timerHandle); updateTimer();
+    timerHandle=setInterval(()=>{if(state.finished)return;state.seconds=Math.max(0,state.seconds-1);updateTimer();if(state.seconds===0)clearInterval(timerHandle);if(state.seconds%10===0)saveProgress()},1000)
+  }
+  function updateTimer(){const m=Math.floor(state.seconds/60),s=state.seconds%60,el=document.getElementById('timer');el.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');el.classList.toggle('timer-warning',state.seconds<=300)}
+  function startMission(){
+    const participant=document.getElementById('participant').value.trim();
+    const team=document.getElementById('team').value.trim();
+    const members=document.getElementById('members').value.trim();
+    const access=document.getElementById('access').value.replace(/\s+/g,'').toLocaleLowerCase('es');
+    if(!participant){alert('Escriba el nombre del participante responsable.');document.getElementById('participant').focus();return}
+    if(!team){alert('Escriba el nombre del equipo.');document.getElementById('team').focus();return}
+    if(!members){alert('Escriba los nombres de los integrantes.');document.getElementById('members').focus();return}
+    if(access!=='parcial'){alert('La clave de activación es PARCIAL. Puede escribirla en mayúsculas o minúsculas.');document.getElementById('access').focus();return}
+    state={participant,team,members,started:true,current:'intro',seconds:settings.minutes*60,answers:[],attempts:{},score:0,finished:false};
+    startTimer();
+    goTo('intro');
+  }
+  function submitChallenge(n){
+    if(state.answers.some(a=>a.challenge===n))return;
+    const input=document.getElementById('answer'+n),value=input.value.trim();
+    if(!value){input.focus();input.animate([{transform:'translateX(-5px)'},{transform:'translateX(5px)'},{transform:'translateX(0)'}],{duration:260});return}
+    state.attempts=state.attempts||{};
+    const attempt=(state.attempts[n]||0)+1;
+    state.attempts[n]=attempt;
+    const ok=answerIsCorrect(n,value);
+    const points=ok?20-((attempt-1)*5):0;
+    input.disabled=true;input.nextElementSibling.disabled=true;
+    const fb=document.getElementById('feedback'+n);
+    const next=document.getElementById('next'+n);
+    if(ok){
+      state.score+=points;
+      state.answers.push({challenge:n,response:value,correct:true,expected:correctAnswer(n),attempts:attempt,points});
+      document.getElementById('liveScore').textContent=state.score;
+      fb.className='feedback show ok';
+      fb.innerHTML='✓ Clave correcta en el intento '+attempt+'. Han obtenido <strong>'+points+' puntos</strong>.';
+      showNextRiddle(n);
+    }else if(attempt<3){
+      const nextValue=20-(attempt*5);
+      fb.className='feedback show bad';
+      fb.innerHTML='La clave no es correcta. Han utilizado '+attempt+' de 3 oportunidades. Si vuelven a intentarlo, este reto tendrá un valor máximo de <strong>'+nextValue+' puntos</strong>.';
+      next.classList.add('show');
+      next.innerHTML='<strong>¿Qué desean hacer?</strong><p style="margin:8px 0 14px">Pueden intentarlo nuevamente o seguir al próximo destino sin sumar puntos en este reto.</p><div class="grid2"><button class="btn btn-primary" onclick="retryChallenge('+n+')">Intentar nuevamente</button><button class="btn btn-secondary" onclick="skipChallenge('+n+')">Seguir sin puntos</button></div>';
+    }else{
+      state.answers.push({challenge:n,response:value,correct:false,expected:correctAnswer(n),attempts:attempt,points:0});
+      fb.className='feedback show bad';
+      fb.innerHTML='Tercera oportunidad utilizada. No se suman puntos. La respuesta correcta era <strong>'+escapeHtml(correctAnswer(n))+'</strong>.';
+      showNextRiddle(n);
+    }
+    saveProgress();
+  }
+  function retryChallenge(n){
+    const input=document.getElementById('answer'+n),next=document.getElementById('next'+n),attempt=(state.attempts&&state.attempts[n])||1;
+    input.disabled=false;input.value='';input.nextElementSibling.disabled=false;input.placeholder='Intento '+(attempt+1)+' de 3';
+    next.classList.remove('show');next.innerHTML='';input.focus();
+  }
+  function skipChallenge(n){
+    const input=document.getElementById('answer'+n),attempt=(state.attempts&&state.attempts[n])||1;
+    state.answers.push({challenge:n,response:input.value.trim(),correct:false,expected:correctAnswer(n),attempts:attempt,points:0});
+    const fb=document.getElementById('feedback'+n);fb.className='feedback show bad';fb.innerHTML='El equipo decidió continuar. Este reto queda con <strong>0 puntos</strong>. La respuesta correcta era <strong>'+escapeHtml(correctAnswer(n))+'</strong>.';
+    showNextRiddle(n);saveProgress();
+  }
+  function showNextRiddle(n){
+    const next=document.getElementById('next'+n);next.classList.add('show');next.innerHTML='<strong>Acertijo del siguiente destino</strong><p class="riddle" style="margin-top:12px">'+riddles[n]+'</p><button class="btn '+(n%2?'btn-primary':'btn-secondary')+'" style="margin-top:15px" onclick="advance('+n+')">'+(n===5?'Regresar al centro de control':'Ya encontramos el siguiente lugar')+' →</button>';
+  }
+  function advance(n){if(n===5)finishGame();else goTo(destinations[n])}
+  function finishGame(){state.finished=true;clearInterval(timerHandle);goTo('final');document.getElementById('progressBar').style.width='100%';renderResults();launchConfetti()}
+  function renderResults(){
+    document.getElementById('finalTitle').textContent='Resultado de '+state.team;
+    document.getElementById('finalText').textContent=state.participant+', el equipo completó las cinco estaciones en '+formatTime(settings.minutes*60-state.seconds)+'.';
+    document.getElementById('finalScore').textContent=state.score;
+    document.getElementById('scoreRing').style.setProperty('--score-angle',(state.score/100*360)+'deg');
+    document.getElementById('results').innerHTML=state.answers.map(a=>'<div class="result-line"><strong>'+a.challenge+'</strong><div><strong>Reto '+a.challenge+'</strong><br><small>Respuesta: '+escapeHtml(a.response)+' · Intentos: '+(a.attempts||1)+'</small></div><strong class="'+(a.correct?'status-ok':'status-bad')+'">'+(a.correct?'Correcto +'+a.points:'Sin puntos')+'</strong></div>').join('');
+  }
+  function revealObject(btn,message){const tap=btn.querySelector('.tap');tap.textContent=message;tap.style.maxWidth='88%';tap.style.whiteSpace='normal';tap.style.bottom='12px';btn.querySelector('.emoji').style.transform='translateY(-24px) scale(.82)'}
+  function formatTime(sec){const m=Math.floor(sec/60),s=sec%60;return m+' min '+String(s).padStart(2,'0')+' s'}
+  function escapeHtml(v){return String(v).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+  function saveProgress(){if(state.started)localStorage.setItem('rallyLogisticoProgress',JSON.stringify(state))}
+  function openSettings(){document.getElementById('cfgAccess').value=settings.access;document.getElementById('cfgR1').value=settings.r1;document.getElementById('cfgMinutes').value=settings.minutes;document.getElementById('settingsModal').classList.add('open')}
+  function closeSettings(){document.getElementById('settingsModal').classList.remove('open')}
+  function saveSettings(){const r1=document.getElementById('cfgR1').value.trim();if(!/^\d{4,12}$/.test(r1)){alert('La clave del Reto 1 debe contener entre 4 y 12 números.');return}settings={access:'parcial',r1,minutes:Math.max(10,Math.min(180,Number(document.getElementById('cfgMinutes').value)||45))};localStorage.setItem('rallyLogisticoSettings',JSON.stringify(settings));state.seconds=settings.minutes*60;updateTimer();closeSettings();alert('Configuración guardada.')}
+  function launchConfetti(){const colors=['#2dd4bf','#ffca38','#ff6577','#8b5cf6','#38bdf8'];for(let i=0;i<70;i++){const d=document.createElement('i');d.className='confetti';d.style.left=Math.random()*100+'vw';d.style.background=colors[i%colors.length];d.style.animationDuration=(2.8+Math.random()*3)+'s';d.style.animationDelay=(Math.random()*.8)+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),7000)}}
+  function wrapText(ctx,text,x,y,maxWidth,lineHeight,maxLines=2){const words=text.split(' ');let line='',lines=[];for(const word of words){const test=line+word+' ';if(ctx.measureText(test).width>maxWidth&&line){lines.push(line.trim());line=word+' '}else line=test}if(line)lines.push(line.trim());lines.slice(0,maxLines).forEach((l,i)=>ctx.fillText(l,x,y+i*lineHeight));return y+Math.min(lines.length,maxLines)*lineHeight}
+  function downloadCertificate(){
+    const c=document.createElement('canvas');c.width=1600;c.height=1120;const x=c.getContext('2d');
+    const g=x.createLinearGradient(0,0,1600,1120);g.addColorStop(0,'#f7fbff');g.addColorStop(.52,'#ecfff9');g.addColorStop(1,'#fff2dc');x.fillStyle=g;x.fillRect(0,0,c.width,c.height);
+    x.strokeStyle='#103b62';x.lineWidth=18;x.strokeRect(35,35,1530,1050);x.strokeStyle='#20bfa8';x.lineWidth=4;x.strokeRect(58,58,1484,1004);
+    x.textAlign='center';x.fillStyle='#0e2c4a';x.font='900 40px Arial';x.fillText('CERTIFICADO DE MISIÓN LOGÍSTICA',800,145);x.fillStyle='#139c89';x.font='700 25px Arial';x.fillText('Cámara de Escape Digital · Gestión Logística Estratégica',800,195);
+    x.fillStyle='#52667b';x.font='24px Arial';x.fillText('Se reconoce la participación de',800,275);x.fillStyle='#0e2c4a';x.font='900 55px Arial';x.fillText(state.participant,800,348);
+    x.fillStyle='#52667b';x.font='24px Arial';x.fillText('como responsable del equipo',800,400);x.fillStyle='#873fc1';x.font='900 42px Arial';x.fillText(state.team,800,458);
+    x.fillStyle='#334b63';x.font='21px Arial';wrapText(x,'Integrantes: '+state.members,800,510,1250,30,3);
+    x.fillStyle='#0e2c4a';x.font='900 95px Arial';x.fillText(state.score+'/100',800,680);x.fillStyle='#52667b';x.font='700 23px Arial';x.fillText('PUNTAJE FINAL',800,720);
+    x.textAlign='left';x.font='700 19px Arial';let y=785;state.answers.forEach(a=>{x.fillStyle=a.correct?'#087a62':'#a05a00';x.fillText((a.correct?'✓':'○')+' Reto '+a.challenge+': '+a.response+'  |  Intentos: '+(a.attempts||1)+'  |  '+(a.points||0)+' puntos',180,y);y+=42});
+    x.textAlign='center';x.fillStyle='#52667b';x.font='18px Arial';x.fillText('Tiempo de resolución: '+formatTime(settings.minutes*60-state.seconds)+' · Emitido el '+new Date().toLocaleDateString('es-PA'),800,1030);
+    const a=document.createElement('a');a.download='Certificado_'+safeName(state.team)+'.png';a.href=c.toDataURL('image/png');a.click();
+  }
+  function downloadReport(){
+    const rows=state.answers.map(a=>`<tr><td>Reto ${a.challenge}</td><td>${escapeHtml(a.response)}</td><td>${escapeHtml(a.expected)}</td><td>${a.attempts||1}</td><td>${a.correct?'Correcta':'Incorrecta'}</td><td>${a.points||0}</td></tr>`).join('');
+    const html=`<!doctype html><html lang="es"><meta charset="utf-8"><title>Certificado ${escapeHtml(state.team)}</title><style>body{font-family:Arial;color:#17324d;margin:0;padding:36px;background:#eef6ff}.page{max-width:900px;margin:auto;background:white;padding:46px;border:10px solid #173f68;box-shadow:0 20px 60px #9fb3c8}h1{text-align:center;color:#0b8f7c}h2{text-align:center;font-size:34px}.score{text-align:center;font-size:70px;font-weight:900;color:#7b3fc1}table{width:100%;border-collapse:collapse;margin-top:25px}th{background:#173f68;color:white}th,td{padding:11px;border:1px solid #ccd8e4;text-align:left}.meta{text-align:center;color:#5b6e81}.print{text-align:center;margin-top:25px}@media print{body{background:white;padding:0}.page{box-shadow:none}.print{display:none}}</style><div class="page"><h1>CERTIFICADO DE MISIÓN LOGÍSTICA</h1><p class="meta">Cámara de Escape Digital · Gestión Logística Estratégica</p><h2>${escapeHtml(state.participant)}</h2><p class="meta">Equipo <strong>${escapeHtml(state.team)}</strong><br>Integrantes: ${escapeHtml(state.members)}</p><div class="score">${state.score}/100</div><table><thead><tr><th>Reto</th><th>Respuesta del equipo</th><th>Respuesta esperada</th><th>Intentos</th><th>Resultado</th><th>Puntos</th></tr></thead><tbody>${rows}</tbody></table><p class="meta">Tiempo: ${formatTime(settings.minutes*60-state.seconds)} · Fecha: ${new Date().toLocaleDateString('es-PA')}</p><div class="print"><button onclick="window.print()">Imprimir o guardar como PDF</button></div></div></html>`;
+    const blob=new Blob([html],{type:'text/html;charset=utf-8'}),a=document.createElement('a');a.download='Certificado_respuestas_'+safeName(state.team)+'.html';a.href=URL.createObjectURL(blob);a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1200)
+  }
+  function safeName(v){return String(v).trim().replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ_-]+/g,'_').slice(0,50)||'equipo'}
+  updateTimer();
+</script>
+</body>
+</html>
